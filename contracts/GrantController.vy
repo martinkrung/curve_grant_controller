@@ -24,18 +24,18 @@ def __init__(curve_agent: address, grantee: address, token: address):
 @external
 def switch():
     assert msg.sender == CURVE_AGENT, 'dev: only curve agent can call this function'
-
     self.on = not self.on
     
+
 @external
 def withdraw():
     """
     @notice send all tokens to the grantee or the agent
     """
-    assert self.on, 'dev: contract is off'
-    assert msg.sender in [CURVE_AGENT, GRANTEE], 'dev: only agent or grantee can call this function'
-
     amount: uint256 = staticcall IERC20(TOKEN).balanceOf(self)
 
-    assert extcall IERC20(TOKEN).approve(self, amount)
-    assert extcall IERC20(TOKEN).transferFrom(self, msg.sender, amount, default_return_value=True)
+    if self.on:
+        extcall IERC20(TOKEN).transfer(GRANTEE, amount)
+    else:
+        assert msg.sender == CURVE_AGENT, 'dev: only agent on off'
+        extcall IERC20(TOKEN).transfer(CURVE_AGENT, amount)
