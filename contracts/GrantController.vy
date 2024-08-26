@@ -30,7 +30,7 @@ def switch():
 @external
 def withdraw():
     """
-    @notice forward reward token from contract to gauge
+    @notice send all tokens to the grantee or the agent
     """
     assert self.on, 'dev: contract is off'
     assert msg.sender in [CURVE_AGENT, GRANTEE], 'dev: only agent or grantee can call this function'
